@@ -60,8 +60,8 @@ public class TeleOpPOV extends OpMode
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor frontLeftMotor,backLeftMotor, frontRightMotor, backRightMotor, extensionMotor, pivotMotor;
-    private CRServo intakeServo, headServo;
-
+    private CRServo intakeServo;
+    private Servo headServo;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -77,7 +77,8 @@ public class TeleOpPOV extends OpMode
         backRightMotor = hardwareMap.get(DcMotor.class, "backRightMotor");
         frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeServo = hardwareMap.get(CRServo.class, "Intake");
-        headServo = hardwareMap.get(CRServo.class, "Head");
+        headServo = hardwareMap.get(Servo.class, "Head");
+        headServo.setPosition(0.5);
         extensionMotor = hardwareMap.get(DcMotor.class, "Extension");
         pivotMotor = hardwareMap.get(DcMotor.class, "Pivot");
         //leftDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -159,9 +160,9 @@ public class TeleOpPOV extends OpMode
         else if (gamepad2.b) intakeServo.setPower(-0.5);
         else intakeServo.setPower(0);
 
-        if (gamepad2.x) headServo.setPower(0.5);
-        else if (gamepad2.y) headServo.setPower(-0.5);
-        else headServo.setPower(0);
+        if (gamepad2.x) headServo.setPosition(headServo.getPosition()+0.01);
+        else if (gamepad2.y) headServo.setPosition(headServo.getPosition()-0.01);
+        else headServo.setPosition(headServo.getPosition());
 
         if (gamepad2.left_bumper) extensionMotor.setPower(0.5);
         else if (gamepad2.right_bumper) extensionMotor.setPower(-0.5);
@@ -175,6 +176,7 @@ public class TeleOpPOV extends OpMode
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
         telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+        telemetry.addData("headServo", headServo.getPosition());
         telemetry.update();
 
 
