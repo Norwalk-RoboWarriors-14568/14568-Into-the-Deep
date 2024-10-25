@@ -29,7 +29,6 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -37,7 +36,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 /*
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -59,7 +57,7 @@ public class TeleOpPOV extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor frontLeftMotor,backLeftMotor, frontRightMotor, backRightMotor, extensionMotor, pivotMotor;
+    private DcMotor frontLeftMotor,backLeftMotor, frontRightMotor, backRightMotor, verticalMotor, extentionMotor;
     private CRServo intakeServo;
     private Servo headServo;
 
@@ -76,11 +74,13 @@ public class TeleOpPOV extends OpMode
         frontRightMotor = hardwareMap.get(DcMotor.class, "frontRightMotor");
         backRightMotor = hardwareMap.get(DcMotor.class, "backRightMotor");
         frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeServo = hardwareMap.get(CRServo.class, "Intake");
         headServo = hardwareMap.get(Servo.class, "Head");
         headServo.setPosition(0.5);
-        extensionMotor = hardwareMap.get(DcMotor.class, "Extension");
-        pivotMotor = hardwareMap.get(DcMotor.class, "Pivot");
+        verticalMotor = hardwareMap.get(DcMotor.class, "Extension");
+        extentionMotor = hardwareMap.get(DcMotor.class, "Pivot");
         //leftDrive.setDirection(DcMotor.Direction.REVERSE);
         //rightDrive.setDirection(DcMotor.Direction.FORWARD);
 
@@ -88,8 +88,8 @@ public class TeleOpPOV extends OpMode
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        extensionMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        verticalMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        extentionMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         telemetry.addData("Status", "Initialized");
     }
@@ -151,26 +151,24 @@ public class TeleOpPOV extends OpMode
 
 
         double powerPrecentage = .75;
-        frontLeftMotor.setPower(-leftFrontPower * powerPrecentage);
+        frontLeftMotor.setPower(leftFrontPower * powerPrecentage);
         frontRightMotor.setPower(rightFrontPower * powerPrecentage);
-        backLeftMotor.setPower(-leftBackPower * powerPrecentage);
+        backLeftMotor.setPower(leftBackPower * powerPrecentage);
         backRightMotor.setPower(rightBackPower * powerPrecentage);
 
-        if (gamepad2.a) intakeServo.setPower(0.5);
-        else if (gamepad2.b) intakeServo.setPower(-0.5);
+        if (gamepad2.left_trigger > 0.1  ) intakeServo.setPower(gamepad2.left_trigger);
+        else if (gamepad2.right_trigger > 0.1  ) intakeServo.setPower(-gamepad2.right_trigger);
         else intakeServo.setPower(0);
 
-        if (gamepad2.x) headServo.setPosition(headServo.getPosition()+0.01);
-        else if (gamepad2.y) headServo.setPosition(headServo.getPosition()-0.01);
+        if (gamepad2.dpad_right) headServo.setPosition(headServo.getPosition()-0.005);
+        else if (gamepad2.dpad_left) headServo.setPosition(headServo.getPosition()+0.005);
         else headServo.setPosition(headServo.getPosition());
 
-        if (gamepad2.left_bumper) extensionMotor.setPower(0.5);
-        else if (gamepad2.right_bumper) extensionMotor.setPower(-0.5);
-        else extensionMotor.setPower(0);
+        if (gamepad2.right_stick_y > 0.1 ||gamepad2.right_stick_y < -0.1 ) verticalMotor.setPower(gamepad2.right_stick_y);
+        else verticalMotor.setPower(0);
 
-        if (gamepad2.dpad_up) pivotMotor.setPower(0.5);
-        else if (gamepad2.dpad_down) pivotMotor.setPower(-0.5);
-        else pivotMotor.setPower(0);
+        if (gamepad2.left_stick_y > 0.1 ||gamepad2.left_stick_y < -0.1 ) extentionMotor.setPower(gamepad2.left_stick_y);
+        else extentionMotor.setPower(0);
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
