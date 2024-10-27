@@ -21,7 +21,6 @@ public class left extends LinearOpMode {
         backLeftMotor = hardwareMap.get(DcMotor.class, "backLeftMotor");
         frontRightMotor = hardwareMap.get(DcMotor.class, "frontRightMotor");
         backRightMotor = hardwareMap.get(DcMotor.class, "backRightMotor");
-        frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeServo = hardwareMap.get(CRServo.class, "Intake");
@@ -40,7 +39,20 @@ public class left extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         initalize();
         while (!opModeIsActive()){}
-        automethods.DriveStraight(24, 0.5);
+
+        automethods.Strafe(24, 0.5, false);
+        sleep(1000);
+        automethods.DriveStraight(107, 0.5);
+        sleep(1000);
+        automethods.Turn(90,0.5, true);
+        sleep(1000);
+        automethods.DriveStraight(72, 0.5);
+        sleep(1000);
+        automethods.Strafe(79, 0.5, true);
+        sleep(1000);
+        automethods.DriveStraight(-96, 0.5);
+        sleep(1000);
+        automethods.Strafe(12, 0.5, true);
     }
 
 }

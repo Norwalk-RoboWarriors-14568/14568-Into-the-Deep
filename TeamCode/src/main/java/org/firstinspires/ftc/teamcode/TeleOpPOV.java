@@ -73,7 +73,6 @@ public class TeleOpPOV extends OpMode
         backLeftMotor = hardwareMap.get(DcMotor.class, "backLeftMotor");
         frontRightMotor = hardwareMap.get(DcMotor.class, "frontRightMotor");
         backRightMotor = hardwareMap.get(DcMotor.class, "backRightMotor");
-        frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeServo = hardwareMap.get(CRServo.class, "Intake");

@@ -14,7 +14,9 @@ public class Automethods {
 
     double TPI = TicsPerRevolution / Circumfrence;
 
-    double StrafeTPI = 0;
+    double StrafeTPI = 48.7804878;
+
+    double TPD = 11.5;
 
     int leftTarget1 = 0, leftTarget2 = 0, rightTarget1 = 0, rightTarget2 = 0, buffer = 10;
 
@@ -83,10 +85,74 @@ public class Automethods {
         frontRightMotor.setPower(0);
         backRightMotor.setPower(0);
     }
-    public void Straph (double inches, double power, boolean isRight) {
-        int  ticks = 1000;
+    public void Strafe(double inches, double power, boolean isRight) {
+        int  ticks = (int) (StrafeTPI * inches);
        if (isRight){
-
+           leftTarget1 = frontLeftMotor.getCurrentPosition()+ticks;
+           leftTarget2 = backLeftMotor.getCurrentPosition()-ticks;
+           rightTarget1 = frontRightMotor.getCurrentPosition()-ticks;
+           rightTarget2 = backRightMotor.getCurrentPosition()+ticks;
        }
+       else {
+           leftTarget1 = frontLeftMotor.getCurrentPosition()-ticks;
+           leftTarget2 = backLeftMotor.getCurrentPosition()+ticks;
+           rightTarget1 = frontRightMotor.getCurrentPosition()+ticks;
+           rightTarget2 = backRightMotor.getCurrentPosition()-ticks;
+       }
+        frontLeftMotor.setTargetPosition(leftTarget1);
+        backLeftMotor.setTargetPosition(leftTarget2);
+        frontRightMotor.setTargetPosition(rightTarget1);
+        backRightMotor.setTargetPosition(rightTarget2);
+        frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        while(!AtTarget() ){
+            telemetry.addData("frontLeftMotor",frontLeftMotor.getCurrentPosition());
+            telemetry.addData("backLeftMotor",backLeftMotor.getCurrentPosition());
+            telemetry.addData("frontRightMotor",frontRightMotor.getCurrentPosition());
+            telemetry.addData("backRightMotor",backRightMotor.getCurrentPosition());
+            telemetry.update();
+            frontLeftMotor.setPower(power);
+            backLeftMotor.setPower(power);
+            frontRightMotor.setPower(power);
+            backRightMotor.setPower(power);
+        }
+        ZeroMotors();
+    }
+    public void Turn(double degrees, double power, boolean isRight) {
+        int  ticks = (int) (TPD * degrees);
+        if (isRight){
+            leftTarget1 = frontLeftMotor.getCurrentPosition()+ticks;
+            leftTarget2 = backLeftMotor.getCurrentPosition()+ticks;
+            rightTarget1 = frontRightMotor.getCurrentPosition()-ticks;
+            rightTarget2 = backRightMotor.getCurrentPosition()-ticks;
+        }
+        else {
+            leftTarget1 = frontLeftMotor.getCurrentPosition()-ticks;
+            leftTarget2 = backLeftMotor.getCurrentPosition()-ticks;
+            rightTarget1 = frontRightMotor.getCurrentPosition()+ticks;
+            rightTarget2 = backRightMotor.getCurrentPosition()+ticks;
+        }
+        frontLeftMotor.setTargetPosition(leftTarget1);
+        backLeftMotor.setTargetPosition(leftTarget2);
+        frontRightMotor.setTargetPosition(rightTarget1);
+        backRightMotor.setTargetPosition(rightTarget2);
+        frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        while(!AtTarget() ){
+            telemetry.addData("frontLeftMotor",frontLeftMotor.getCurrentPosition());
+            telemetry.addData("backLeftMotor",backLeftMotor.getCurrentPosition());
+            telemetry.addData("frontRightMotor",frontRightMotor.getCurrentPosition());
+            telemetry.addData("backRightMotor",backRightMotor.getCurrentPosition());
+            telemetry.update();
+            frontLeftMotor.setPower(power);
+            backLeftMotor.setPower(power);
+            frontRightMotor.setPower(power);
+            backRightMotor.setPower(power);
+        }
+        ZeroMotors();
     }
 }
