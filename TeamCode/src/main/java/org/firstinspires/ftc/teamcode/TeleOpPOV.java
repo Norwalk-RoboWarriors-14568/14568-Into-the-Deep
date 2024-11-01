@@ -80,6 +80,8 @@ public class TeleOpPOV extends OpMode
         headServo.setPosition(0.5);
         verticalMotor = hardwareMap.get(DcMotor.class, "Extension");
         extentionMotor = hardwareMap.get(DcMotor.class, "Pivot");
+        verticalMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        extentionMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         //leftDrive.setDirection(DcMotor.Direction.REVERSE);
         //rightDrive.setDirection(DcMotor.Direction.FORWARD);
 
@@ -163,10 +165,16 @@ public class TeleOpPOV extends OpMode
         else if (gamepad2.dpad_left) headServo.setPosition(headServo.getPosition()+0.005);
         else headServo.setPosition(headServo.getPosition());
 
-        if (gamepad2.right_stick_y > 0.1 ||gamepad2.right_stick_y < -0.1 ) verticalMotor.setPower(gamepad2.right_stick_y);
+        if (gamepad2.right_stick_y > 0.1 ||gamepad2.right_stick_y < -0.1 ) verticalMotor.setPower(-gamepad2.right_stick_y);
         else verticalMotor.setPower(0);
 
-        if (gamepad2.left_stick_y > 0.1 ||gamepad2.left_stick_y < -0.1 ) extentionMotor.setPower(gamepad2.left_stick_y);
+        int vertTicks = verticalMotor.getCurrentPosition();
+        int extTicks = extentionMotor.getCurrentPosition();
+        if (vertTicks > 3500 && extTicks > 100) extentionMotor.setPower(-0.75);
+        else if (vertTicks < 2500 && extTicks > 2300) extentionMotor.setPower(-0.75);
+        else if (extTicks < 0 ) extentionMotor.setPower(.5);
+        else if (extTicks > 2900 ) extentionMotor.setPower(-.5);
+        else if (extTicks >= 0 && extTicks <= 2900 && gamepad2.left_stick_y > 0.1 || gamepad2.left_stick_y < -0.1 ) extentionMotor.setPower(-gamepad2.left_stick_y);
         else extentionMotor.setPower(0);
 
         // Show the elapsed game time and wheel power.
@@ -174,6 +182,8 @@ public class TeleOpPOV extends OpMode
         telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
         telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
         telemetry.addData("headServo", headServo.getPosition());
+        telemetry.addData("extensionMotor", extentionMotor.getCurrentPosition());
+        telemetry.addData("verticalServo", verticalMotor.getCurrentPosition());
         telemetry.update();
 
 
