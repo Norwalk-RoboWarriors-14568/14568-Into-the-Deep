@@ -16,9 +16,12 @@ public class Automethods {
 
     double StrafeTPI = 48.7804878;
 
-    double TPD = 11.5;
+    double TPD = 28.033333;
 
-    int leftTarget1 = 0, leftTarget2 = 0, rightTarget1 = 0, rightTarget2 = 0, buffer = 10;
+    double extTPI = 123.07692;
+
+    double pivotTPD = 27.7777778;
+    int leftTarget1 = 0, leftTarget2 = 0, rightTarget1 = 0, rightTarget2 = 0, target1 = 0, target2 = 0, target3 = 0, buffer = 10;
 
     private DcMotor frontLeftMotor, backLeftMotor, frontRightMotor, backRightMotor, extensionMotor, pivotMotor;
     private CRServo intakeServo;
@@ -39,7 +42,7 @@ public class Automethods {
         headServo = head;
         telemetry = telemetryin;
     }
-    public void DriveStraight (double inches, double power){
+    public void DriveStraight (double inches, double power, boolean b){
         int  ticks = (int) (inches * TPI);
         leftTarget1 = frontLeftMotor.getCurrentPosition()+ticks;
         leftTarget2 = backLeftMotor.getCurrentPosition()+ticks;
@@ -65,8 +68,7 @@ public class Automethods {
             frontRightMotor.setPower(power);
             backRightMotor.setPower(power);
         }
-        ZeroMotors();
-    }
+        ZeroMotors();    }
     private boolean AtTarget() {
         return (frontLeftMotor.getCurrentPosition() > (leftTarget1 - buffer) &&
                          frontLeftMotor.getCurrentPosition() < (leftTarget1 + buffer)) &&
@@ -134,6 +136,7 @@ public class Automethods {
             rightTarget1 = frontRightMotor.getCurrentPosition()+ticks;
             rightTarget2 = backRightMotor.getCurrentPosition()+ticks;
         }
+
         frontLeftMotor.setTargetPosition(leftTarget1);
         backLeftMotor.setTargetPosition(leftTarget2);
         frontRightMotor.setTargetPosition(rightTarget1);
@@ -155,4 +158,55 @@ public class Automethods {
         }
         ZeroMotors();
     }
+
+    public void ZeroArmMotors() {
+        pivotMotor.setPower(0);
+        extensionMotor.setPower(0);
+    }
+
+    public void HoldArmMotors() {
+        pivotMotor.setPower(0.01);
+        extensionMotor.setPower(0);
+    }
+
+    private boolean ArmAtTarget() {
+        return (pivotMotor.getCurrentPosition() > (target1 - buffer) &&
+                pivotMotor.getCurrentPosition() < (target1 + buffer)) &&
+                (extensionMotor.getCurrentPosition() > (target2 - buffer) &&
+                       extensionMotor.getCurrentPosition() < (target2 + buffer));
+
+    }
+
+    public void Arm(double headPosition, double degrees, double inches, double power, boolean isUp) {
+        int extTicks = (int) (extTPI * inches);
+        target2 = extensionMotor.getCurrentPosition() + extTicks;
+        int pivotTicks = (int) (pivotTPD * degrees);
+        if (isUp) {
+            target1 = pivotMotor.getCurrentPosition() + pivotTicks;
+        } else {
+            target1 = pivotMotor.getCurrentPosition() - pivotTicks;
+        }
+
+        pivotMotor.setTargetPosition(target1);
+        extensionMotor.setTargetPosition(target2);
+        pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        extensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        headServo.setPosition(headPosition);
+        while (!ArmAtTarget()) {
+            telemetry.addData("pivotMotor", pivotMotor.getCurrentPosition());
+            telemetry.addData("extensionMotor", extensionMotor.getCurrentPosition());
+            telemetry.update();
+            pivotMotor.setPower(power);
+            extensionMotor.setPower(power);
+
+        }
+        HoldArmMotors();
+    }
+    public void Head( double power, double position) {
+
+        //target2 = extensionMotor.getCurrentPosition() + extTicks;
+       //headServo.getCurrentPosition() - pivotTicks;
+
+
+        }
 }

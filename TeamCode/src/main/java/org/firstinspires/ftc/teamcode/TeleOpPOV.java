@@ -61,11 +61,44 @@ public class TeleOpPOV extends OpMode
     private CRServo intakeServo;
     private Servo headServo;
 
+    private boolean gp1rBumper = false;
+    private int buffer = 25;
     /*
      * Code to run ONCE when the driver hits INIT
      */
+
     @Override
     public void init() {
+        if (gp1rBumper){
+
+            if(verticalMotor.getCurrentPosition()<verticalMotor.getTargetPosition()-buffer||
+            verticalMotor.getCurrentPosition()>verticalMotor.getTargetPosition()+buffer) gp1rBumper = false;
+        }
+        else {
+            if (gamepad1.right_bumper)
+            if (gamepad2.left_trigger > 0.1  ) intakeServo.setPower(gamepad2.left_trigger);
+            else if (gamepad2.right_trigger > 0.1  ) intakeServo.setPower(-gamepad2.right_trigger);
+            else intakeServo.setPower(0);
+
+            if (gamepad2.dpad_right) headServo.setPosition(headServo.getPosition()-0.005);
+            else if (gamepad2.dpad_left) headServo.setPosition(headServo.getPosition()+0.005);
+            else headServo.setPosition(headServo.getPosition());
+
+            int vertTicks = verticalMotor.getCurrentPosition();
+            if (vertTicks > 3374) verticalMotor.setPower(-.1);
+            else if (gamepad2.right_stick_y > 0.1 ||gamepad2.right_stick_y < -0.1 ) verticalMotor.setPower(-gamepad2.right_stick_y);
+            else verticalMotor.setPower(0);
+
+            int extTicks = extentionMotor.getCurrentPosition();
+            if (vertTicks > 3274 && extTicks > 100) extentionMotor.setPower(-0.75);
+            else if (vertTicks < 2500 && extTicks > 2300) extentionMotor.setPower(-0.75);
+            else if (extTicks < 0 ) extentionMotor.setPower(.5);
+            else if (extTicks > 2900 ) extentionMotor.setPower(-.5);
+            else if (extTicks >= 0 && extTicks <= 2900 && gamepad2.left_stick_y > 0.1 || gamepad2.left_stick_y < -0.1 ) extentionMotor.setPower(-gamepad2.left_stick_y);
+            else extentionMotor.setPower(0);
+        }
+
+
         telemetry.addData("Status", "Initialized");
 
 
@@ -77,7 +110,7 @@ public class TeleOpPOV extends OpMode
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeServo = hardwareMap.get(CRServo.class, "Intake");
         headServo = hardwareMap.get(Servo.class, "Head");
-        headServo.setPosition(0.5);
+        headServo.setPosition(0.1089);
         verticalMotor = hardwareMap.get(DcMotor.class, "Extension");
         extentionMotor = hardwareMap.get(DcMotor.class, "Pivot");
         verticalMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -165,12 +198,13 @@ public class TeleOpPOV extends OpMode
         else if (gamepad2.dpad_left) headServo.setPosition(headServo.getPosition()+0.005);
         else headServo.setPosition(headServo.getPosition());
 
-        if (gamepad2.right_stick_y > 0.1 ||gamepad2.right_stick_y < -0.1 ) verticalMotor.setPower(-gamepad2.right_stick_y);
+        int vertTicks = verticalMotor.getCurrentPosition();
+        if (vertTicks > 3374) verticalMotor.setPower(-.1);
+        else if (gamepad2.right_stick_y > 0.1 ||gamepad2.right_stick_y < -0.1 ) verticalMotor.setPower(-gamepad2.right_stick_y);
         else verticalMotor.setPower(0);
 
-        int vertTicks = verticalMotor.getCurrentPosition();
         int extTicks = extentionMotor.getCurrentPosition();
-        if (vertTicks > 3500 && extTicks > 100) extentionMotor.setPower(-0.75);
+        if (vertTicks > 3274 && extTicks > 100) extentionMotor.setPower(-0.75);
         else if (vertTicks < 2500 && extTicks > 2300) extentionMotor.setPower(-0.75);
         else if (extTicks < 0 ) extentionMotor.setPower(.5);
         else if (extTicks > 2900 ) extentionMotor.setPower(-.5);
@@ -184,7 +218,12 @@ public class TeleOpPOV extends OpMode
         telemetry.addData("headServo", headServo.getPosition());
         telemetry.addData("extensionMotor", extentionMotor.getCurrentPosition());
         telemetry.addData("verticalServo", verticalMotor.getCurrentPosition());
+        telemetry.addData("frontLeftMotor", frontLeftMotor.getCurrentPosition());
+        telemetry.addData("frontRightMotor", frontRightMotor.getCurrentPosition());
+        telemetry.addData("backLeftMotor", backLeftMotor.getCurrentPosition());
+        telemetry.addData("backRightMotor", backRightMotor.getCurrentPosition());
         telemetry.update();
+
 
 
     }

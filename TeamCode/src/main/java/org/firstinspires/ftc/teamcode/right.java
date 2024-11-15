@@ -8,9 +8,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
-@Autonomous(name = "left")
-
-public class left extends LinearOpMode {
+@Autonomous(name = "right")
+public class right extends LinearOpMode {
 
     DcMotor frontLeftMotor,backLeftMotor, frontRightMotor, backRightMotor, verticalMotor, extentionMotor;
     CRServo intakeServo;
@@ -25,11 +24,12 @@ public class left extends LinearOpMode {
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeServo = hardwareMap.get(CRServo.class, "Intake");
         headServo = hardwareMap.get(Servo.class, "Head");
-        headServo.setPosition(0.5);
+        headServo.setPosition(0.1089);
         verticalMotor = hardwareMap.get(DcMotor.class, "Extension");
         extentionMotor = hardwareMap.get(DcMotor.class, "Pivot");
         verticalMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         extentionMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
         frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -42,11 +42,10 @@ public class left extends LinearOpMode {
         initalize();
         while (!opModeIsActive()){}
 
-        automethods.Arm(0, 0, 0.5, 0.5, true);
-        //sleep (20000);
-        //automethods.Strafe(48, 0.5, true);
-        //sleep(1000);
-       // automethods.DriveStraight(107, 0.5);
+
+        automethods.DriveStraight(20, 0.5, true);
+        sleep(1000);
+         automethods.Arm(0.6589, 71.343639, 0, 0.5, true);
         //sleep(1000);
         //automethods.Turn(90,0.5, true);
         //sleep(1000);
