@@ -42,30 +42,41 @@ public class right extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         initalize();
-        sleep(2000);
+        sleep(4000);
         intakeServo.setPower(-.2);
         sleep(1000);
         intakeServo.setPower(0);
         while (!opModeIsActive()){}
 
         automethods.Arm(0.1089, 10, 0, 0.5, true);
-        sleep(1000);
         headServo.setPosition(0.6589);
-        sleep(1000);
+        sleep(250);
         automethods.Arm(0.6589, 61.343639, 6, 0.5, true);
-        sleep(2000);
+        sleep(250);
         automethods.DriveStraight(20, 0.5, true);
-        sleep(2000);
+        sleep(250);
         automethods.Arm(0.6589, 20, 0, 0.5, false);
-        sleep(1000);
+        sleep(250);
         automethods.DriveStraight(-2,0.5,true);
         intakeServo.setPower(-.5);
-        sleep(1000);
+        sleep(250);
         automethods.Arm(0.6589, 10, -6, 0.5, false);
-        sleep(1000);
-        automethods.Turn(42,0.5,false);
-        automethods.DriveStraight(-24,0.5,true);
-        //automethods.Turn(90,0.5, true);
+        sleep(250);
+        automethods.Turn(90,0.5, false);
+        sleep(250);
+        automethods.DriveStraight(-27,0.5,true);
+        sleep(250);
+        automethods.Strafe(30, 0.6, true);
+        automethods.DriveStraight(-8, 0.6, true);
+        automethods.Strafe(43, 0.6, false);
+        automethods.Strafe(43, 0.6, true);
+        automethods.DriveStraight(-10, 0.6, true);
+        automethods.Strafe(43, 0.6, false);
+        automethods.Strafe(43, 0.6, true);
+        automethods.DriveStraight(-10, 0.6, true);
+        automethods.Strafe(43, 0.6, false);
+
+
         //sleep(1000);
         //automethods.DriveStraight(72, 0.5);
         //sleep(1000);

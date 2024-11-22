@@ -16,7 +16,7 @@ public class Automethods {
 
     double StrafeTPI = 48.7804878;
 
-    double TPD = 28.033333;
+    double TPD = 11.9;
 
     double extTPI = 123.07692;
 
